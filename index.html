@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lab 5</title>
-	<!-- allows to fetch data using axios client -->
+	
 	<!-- axios is a libray to help make HTTP requests to external resources -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
 </head>
@@ -16,17 +16,20 @@
     <div class="content">
         <ol class="countries"></ol>
     </div>
-    <button id="btn">Spawn Countries</button>
+    <button>Spawn Countries</button>
     <script>
 	<!-- creating on click action for button -->
-        document.querySelector("#btn").addEventListener('click',()=>{start()});
+		let spawnButton = document.querySelector("button");
+		spawnButton.addEventListener('click',spawnList);
+		
+		
 				<!-- create function to generate list of countries with codes -->
-        async function start(){
+        async function spawnList(){
 		<!-- used axios to retrieve list of countries provided by a free REST API -->
-            let countries= (await axios.get("https://api.first.org/data/v1/countries")).data.data;
+            let countryList= (await axios.get("https://api.first.org/data/v1/countries")).data.data;
 			<!-- returns array of the keys and values of countries -->
-            let countryCodes=Object.keys(countries);
-            let countryNames=Object.values(countries);
+            let countryCodes=Object.keys(countryList);
+            let countryNames=Object.values(countryList);
             let totalCountries=countryCodes.length;
 			<!-- initialize max list length -->
             let listLength=25;
@@ -41,7 +44,7 @@
                 }
                 randomList.push(holder);
             }
-            renderList(randomList,countryCodes,countries);
+            createList(randomList,countryCodes,countryList);
         }
 <!-- returns random countries out of the total list -->
         let generateRandom=(totalCountries,storage)=>{
@@ -56,7 +59,7 @@
             return rand;
         }
 <!-- function to make sure countries are unique -->
-        let renderList=(list,countryCodes,countries)=>{
+        let createList=(list,countryCodes,countries)=>{
             let html=document.querySelector('.countries');
             html.innerHTML='';
             list.map(country=>{
