@@ -20,54 +20,55 @@
     <script>
 	<!-- creating on click action for button -->
         document.querySelector("#btn").addEventListener('click',()=>{start()});
-<!-- returns random countries out of the total list -->
-        let generateRandom=(totalCountries,memory)=>{
-            let rand=Math.floor(Math.random()*totalCountries+1);
-			<!-- increase the count by 1 for each country iteration -->
-            for(let i=0;i<memory.length;i++){
-                if(memory[i]==rand){
-                    return generateRandom(totalCountries,memory);
-                }
-            }
-            memory.push(rand);
-            return rand;
-        }
-<!-- function to make sure countries are unique -->
-        let renderList=(arr,countryCodes,countries)=>{
-            let html=document.querySelector('.countries');
-            html.innerHTML='';
-            arr.map(country=>{
-                let code=Object.keys(country)[0];
-                countryCodes=countryCodes.filter(c=>c!==code)
-                let name=Object.values(country)[0].country;
-                let template=`<li><span style="font-weight:bold;">${code}</span> ${name}</li>`;
-                html.innerHTML+=template;
-            })
-            countryCodes.forEach(code=>console.log(countries[`${code}`].country))
-        }
-		<!-- create function to generate list of countries with codes -->
+				<!-- create function to generate list of countries with codes -->
         async function start(){
-		<!-- used axios to retrieve list on countries provided by a free REST API -->
+		<!-- used axios to retrieve list of countries provided by a free REST API -->
             let countries= (await axios.get("https://api.first.org/data/v1/countries")).data.data;
 			<!-- returns array of the keys and values of countries -->
             let countryCodes=Object.keys(countries);
             let countryNames=Object.values(countries);
             let totalCountries=countryCodes.length;
-			<!-- initialize list maximum -->
-            let MAX=25;
+			<!-- initialize max list length -->
+            let listLength=25;
 			<!-- create variables for random list -->
-            let randomArr=[];
-            let memory=[];
+            let randomList=[];
+            let storage=[];
 		    <!-- Generates random list -->
-            for(let i=0;i<MAX;i++){
-                rand=generateRandom(totalCountries,memory);
-                let temp={
+            for(let i=0;i<listLength;i++){
+                rand=generateRandom(totalCountries,storage);
+                let holder={
                     [countryCodes[rand-1]]:countryNames[rand-1]
                 }
-                randomArr.push(temp);
+                randomList.push(holder);
             }
-            renderList(randomArr,countryCodes,countries);
+            renderList(randomList,countryCodes,countries);
         }
+<!-- returns random countries out of the total list -->
+        let generateRandom=(totalCountries,storage)=>{
+            let rand=Math.floor(Math.random()*totalCountries+1);
+			<!-- increase the count by 1 for each country iteration -->
+            for(let i=0;i<storage.length;i++){
+                if(storage[i]==rand){
+                    return generateRandom(totalCountries,storage);
+                }
+            }
+            storage.push(rand);
+            return rand;
+        }
+<!-- function to make sure countries are unique -->
+        let renderList=(list,countryCodes,countries)=>{
+            let html=document.querySelector('.countries');
+            html.innerHTML='';
+            list.map(country=>{
+                let code=Object.keys(country)[0];
+                countryCodes=countryCodes.filter(c=>c!==code)
+                let countryName=Object.values(country)[0].country;
+                let template=`<li><span style="font-weight:bold;">${code}</span> ${countryName}</li>`;
+                html.innerHTML+=template;
+            })
+            countryCodes.forEach(code=>console.log(countries[`${code}`].country))
+        }
+
 
     </script>
 </body>
